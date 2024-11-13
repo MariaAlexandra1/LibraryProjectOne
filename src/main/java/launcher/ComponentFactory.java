@@ -25,12 +25,16 @@ public class ComponentFactory {
 
     public static ComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage){//lazy load
         if (instance == null){
-            instance = new ComponentFactory(componentsForTest, primaryStage);
+            synchronized (ComponentFactory.class) {
+                if(instance == null){
+                    instance = new ComponentFactory(componentsForTest, primaryStage);
+                }
+            }
         }
         return instance;
     }
 
-    public ComponentFactory(Boolean componentsForTest, Stage primaryStage){ //si aici
+    private ComponentFactory(Boolean componentsForTest, Stage primaryStage){ //si aici
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImp(bookRepository);
