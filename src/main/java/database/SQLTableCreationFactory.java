@@ -13,8 +13,29 @@ public class SQLTableCreationFactory {
                         "  author varchar(500) NOT NULL," +
                         "  title varchar(500) NOT NULL," +
                         "  publishedDate datetime DEFAULT NULL," +
+                        "  price DECIMAL(10,2) DEFAULT NULL," +
+                        "  stock INT DEFAULT NULL," +
                         "  PRIMARY KEY (id)," +
                         "  UNIQUE KEY id_UNIQUE (id)" +
+                        ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
+
+            case ORDERS:
+                return "CREATE TABLE IF NOT EXISTS orders(" +
+                        "  id bigint NOT NULL AUTO_INCREMENT," +
+                        "  user_id INT NOT NULL," +
+                        "  title varchar(500) NOT NULL," +
+                        "  author varchar(500) NOT NULL," +
+                        "  price DECIMAL(10,2) DEFAULT NULL," +
+                        "  stock INT DEFAULT NULL," +
+                        "  orderDate datetime DEFAULT NULL," +
+                        "  PRIMARY KEY (id)," +
+                        "  UNIQUE KEY id_UNIQUE (id)," +
+                        "  INDEX user_id_ido (user_id ASC),"+
+                        "  CONSTRAINT user_fkido" +
+                        "    FOREIGN KEY (user_id)" +
+                        "    REFERENCES user (id)" +
+                        "    ON DELETE CASCADE" +
+                        "    ON UPDATE CASCADE" +
                         ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
 
             case USER:

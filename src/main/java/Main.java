@@ -1,16 +1,10 @@
 import database.DatabaseConnectionFactory;
 import model.builder.BookBuilder;
 import model.Book;
-import repository.book.BookRepository;
-import repository.book.BookRepositoryCacheDecorator;
-import repository.book.BookRepositoryMySQL;
-import repository.book.Cache;
 import repository.security.RightsRolesRepository;
 import repository.security.RightsRolesRepositoryMySQL;
 import repository.user.UserRepository;
 import repository.user.UserRepositoryMySQL;
-import service.book.BookService;
-import service.book.BookServiceImp;
 import service.user.AuthenticationService;
 import service.user.AuthenticationServiceImpl;
 

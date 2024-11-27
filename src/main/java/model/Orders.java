@@ -2,15 +2,15 @@ package model;
 
 import java.time.LocalDate;
 
-//POJO - Plain Old Java Object
+public class Orders {
 
-public class Book {
     private Long id;
+    private Long user_id;
     private String title;
     private String author;
-    private LocalDate publishedDate;
     private double price;
     private int stock;
+    private LocalDate orderDate;
 
     public Long getId() {
         return id;
@@ -18,6 +18,14 @@ public class Book {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return user_id;
+    }
+
+    public void setUserId(Long userId) {
+        this.user_id = userId;
     }
 
     public String getTitle() {
@@ -36,19 +44,11 @@ public class Book {
         this.author = author;
     }
 
-    public LocalDate getPublishedDate() {
-        return publishedDate;
-    }
-
-    public void setPublishedDate(LocalDate publishedDate) {
-        this.publishedDate = publishedDate;
-    }
-
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -60,8 +60,11 @@ public class Book {
         this.stock = stock;
     }
 
-    @Override
-    public String toString(){
-        return "Book: Id:" + id + " Title:" + title + " Author:" + author + " PublishedDate:" + publishedDate + " Price:" + price + " Stock:" + stock;
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 }

@@ -8,6 +8,7 @@ public interface BookRepository {
     Optional<Book> findById(Long id);
     boolean save(Book book);
     boolean delete(Book book);
+    boolean sale(Book book);
     void removeAll();
 
 

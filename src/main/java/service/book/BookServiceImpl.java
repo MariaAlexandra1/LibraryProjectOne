@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class BookServiceImp implements BookService{
+public class BookServiceImpl implements BookService{
 
     private final BookRepository bookRepository;
-    public BookServiceImp(BookRepository bookRepository){
+    public BookServiceImpl(BookRepository bookRepository){
         this.bookRepository = bookRepository;
     }
     @Override
@@ -21,7 +21,7 @@ public class BookServiceImp implements BookService{
     @Override
     public Book findById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("Book with id: %d wan not found!".formatted(id)));
+                .orElseThrow(()-> new IllegalArgumentException("Book with id: %d was not found!".formatted(id)));
     }
 
     @Override
@@ -32,6 +32,11 @@ public class BookServiceImp implements BookService{
     @Override
     public boolean delete(Book book) {
         return bookRepository.delete(book);
+    }
+
+    @Override
+    public boolean sale(Book book) {
+        return bookRepository.sale(book);
     }
 
     @Override

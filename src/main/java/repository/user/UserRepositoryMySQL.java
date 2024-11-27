@@ -1,6 +1,7 @@
 package repository.user;
 import model.User;
 import model.builder.UserBuilder;
+import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.Connection;
@@ -34,7 +35,8 @@ public class UserRepositoryMySQL implements UserRepository {
     // ' or username LIKE '%admin%'; --
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
         String fetchUserSql = "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ?";
 
         try{
@@ -51,12 +53,16 @@ public class UserRepositoryMySQL implements UserRepository {
                         .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                         .build();
 
-                return user;
+                findByUsernameAndPasswordNotification.setResult(user);
+            }else{
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
             }
         } catch (SQLException e) {
             System.out.println(e.toString());
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
-        return null;
+        return findByUsernameAndPasswordNotification;
     }
 
 

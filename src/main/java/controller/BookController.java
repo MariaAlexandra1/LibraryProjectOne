@@ -3,7 +3,9 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import mapper.BookMapper;
+import model.Book;
 import service.book.BookService;
+import service.orders.OrdersService;
 import view.BookView;
 import view.model.BookDTO;
 import view.model.BookDTOBuilder;
@@ -11,13 +13,16 @@ import view.model.BookDTOBuilder;
 public class BookController {
     private final BookView bookView;
     private final BookService bookService;
+    private final OrdersService ordersService;
 
-    public BookController(BookView bookView, BookService bookService) {
+    public BookController(BookView bookView, BookService bookService, OrdersService ordersService) {
         this.bookView = bookView;
         this.bookService = bookService;
+        this.ordersService = ordersService;
 
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
+        this.bookView.addSaleButtonListener(new SaleButtonListener());
     }
 
     private class SaveButtonListener implements EventHandler<ActionEvent> {
@@ -62,6 +67,29 @@ public class BookController {
             }
 
 
+        }
+    }
+
+    private class SaleButtonListener implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent actionEvent) {
+            BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
+            if (bookDTO != null) {
+                Book book = BookMapper.convertBookDTOToBook(bookDTO);
+                boolean saleSuccessful = bookService.sale(book);
+                if (saleSuccessful) {
+                    boolean orderSuccessful = ordersService.save(book, 1L);
+                    if (orderSuccessful) {
+                        bookView.addDisplayAlertMessage("Sale Successful", "Book Saled", "Book was successfully saled from the database.");
+                        bookView.updateBookFromObservableList(bookDTO);
+                    } else {
+                        bookView.addDisplayAlertMessage("Sale Error", "Problem at saling book", "There was a problem with the database. Please try again!");
+                    }
+                } else {
+                    bookView.addDisplayAlertMessage("Sale Error", "Problem at saling book", "You must select a book before pressing the delete button.");
+                }
+            }
         }
     }
 }

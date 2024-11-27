@@ -25,6 +25,7 @@ public class BookView {
     private Label titleLabel;
     private Button saveButton;
     private Button deleteButton;
+    private Button saleButton;
 
     public BookView(Stage primaryStage, List<BookDTO> books){
         primaryStage.setTitle("Library");
@@ -59,8 +60,10 @@ public class BookView {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        TableColumn<BookDTO, Integer> stockColumn = new TableColumn<BookDTO, Integer>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
-        bookTableView.getColumns().addAll(titleColumn, authorColumn);
+        bookTableView.getColumns().addAll(titleColumn, authorColumn, stockColumn);
         bookTableView.setItems(bookObservableList);
 
         gridPane.add(bookTableView, 0, 0, 5, 1);
@@ -82,6 +85,9 @@ public class BookView {
 
         deleteButton = new Button("Delete");
         gridPane.add(deleteButton, 6, 1);
+
+        saleButton = new Button("Sale");
+        gridPane.add(saleButton, 7, 1);
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
@@ -90,6 +96,10 @@ public class BookView {
 
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
         deleteButton.setOnAction(deleteButtonListener);
+    }
+
+    public void addSaleButtonListener(EventHandler<ActionEvent> saleButtonListener){
+        saleButton.setOnAction(saleButtonListener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String content){
@@ -115,6 +125,21 @@ public class BookView {
 
     public void removeBookFromObservableList(BookDTO book){
         this.bookObservableList.remove(book);
+    }
+
+    public void updateBookFromObservableList(BookDTO book){
+        bookObservableList.stream()
+                .filter(bookDTO -> bookDTO.getTitle().equals(book.getTitle())
+                        && bookDTO.getAuthor().equals(book.getAuthor()))
+                .findFirst()
+                .ifPresent(bookDTO -> {
+
+                    bookDTO.setStock(bookDTO.getStock() - 1);
+                    //this forces the TableView to update what it is showing to the user
+                    bookTableView.refresh();
+
+                });
+
     }
 
     public TableView getBookTableView(){
