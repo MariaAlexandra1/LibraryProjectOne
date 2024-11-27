@@ -48,6 +48,23 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
     }
 
     @Override
+    public boolean sale(Book book) {
+        boolean result = decoratedBookRepository.sale(book);
+
+        if (result) {
+            if (cache.hasResult()) {
+                cache.load().stream()
+                        .filter(b -> b.getId().equals(book.getId()))
+                        .findFirst()
+                        .ifPresent(b -> b.setStock(book.getStock() - 1));
+            }
+        } else {
+            cache.invalidateCache();
+        }
+        return result;
+    }
+
+    @Override
     public void removeAll() {
         cache.invalidateCache();
         decoratedBookRepository.removeAll();

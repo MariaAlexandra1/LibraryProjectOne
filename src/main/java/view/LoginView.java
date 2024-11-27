@@ -25,6 +25,8 @@ public class LoginView {
     private Button logInButton;
     private Text actiontarget;
 
+    private Stage primaryStage; //alt set scene
+
     public LoginView(Stage primaryStage) {
         primaryStage.setTitle("Book Store");
 

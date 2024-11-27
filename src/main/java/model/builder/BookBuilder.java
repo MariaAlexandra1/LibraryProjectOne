@@ -5,6 +5,7 @@ import model.Book;
 import java.time.LocalDate;
 
 //Design Pattern Creational - el se ocupa cu crearea de obiecte
+
 public class BookBuilder {
     private Book book;
     public BookBuilder() {
@@ -28,6 +29,16 @@ public class BookBuilder {
 
     public BookBuilder setPublishedDate(LocalDate publishedDate) {
         book.setPublishedDate(publishedDate);
+        return this;
+    }
+
+    public BookBuilder setPrice(double price) {
+        book.setPrice(price);
+        return this;
+    }
+
+    public BookBuilder setStock(int stock) {
+        book.setStock(stock);
         return this;
     }
 
