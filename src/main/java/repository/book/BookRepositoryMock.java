@@ -36,12 +36,15 @@ public class BookRepositoryMock implements BookRepository {
     }
 
     @Override
-    public boolean sale(Book book) {
+    public boolean sale(Book book, Integer stock) {
+            if(book.getStock() < stock) {
+                return false;
+            }
             Optional<Book> saledBook = books.stream()
                                             .filter(it -> it.getId().equals(book.getId()))
                                             .findFirst();
             if (saledBook.isPresent()) {
-                saledBook.get().setStock(book.getStock() - 1);
+                saledBook.get().setStock(book.getStock() - stock);
                 return true;
             }
             return false;

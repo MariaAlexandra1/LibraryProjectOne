@@ -9,8 +9,8 @@ public class Book {
     private String title;
     private String author;
     private LocalDate publishedDate;
-    private double price;
-    private int stock;
+    private Double price;
+    private Integer stock;
 
     public Long getId() {
         return id;
@@ -52,7 +52,7 @@ public class Book {
         this.price = price;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 

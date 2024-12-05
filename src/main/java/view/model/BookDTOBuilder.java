@@ -19,7 +19,12 @@ public class BookDTOBuilder {
         return this;
     }
 
-    public BookDTOBuilder setStock(int stock){
+    public BookDTOBuilder setPrice(Double price){
+        bookDTO.setPrice(price);
+        return this;
+    }
+
+    public BookDTOBuilder setStock(Integer stock){
         bookDTO.setStock(stock);
         return this;
     }

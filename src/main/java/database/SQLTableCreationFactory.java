@@ -42,7 +42,7 @@ public class SQLTableCreationFactory {
                 return "CREATE TABLE IF NOT EXISTS user (" +
                         "  id INT NOT NULL AUTO_INCREMENT," +
                         "  username VARCHAR(200) NOT NULL," +
-                        "  password VARCHAR(64) NOT NULL," +
+                        "  password VARCHAR(64)," +
                         "  PRIMARY KEY (id)," +
                         "  UNIQUE INDEX id_UNIQUE (id ASC)," +
                         "  UNIQUE INDEX username_UNIQUE (username ASC));";

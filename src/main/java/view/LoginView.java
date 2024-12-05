@@ -94,6 +94,10 @@ public class LoginView {
         return passwordField.getText();
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     public void setActionTargetText(String text){ this.actiontarget.setText(text);}
 
     public void addLoginButtonListener(EventHandler<ActionEvent> loginButtonListener) {

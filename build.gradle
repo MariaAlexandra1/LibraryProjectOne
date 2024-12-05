@@ -16,7 +16,8 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
-
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
+    implementation 'org.openjfx:javafx-graphics:20'
 }
 
 apply plugin: "com.github.johnrengelman.shadow"

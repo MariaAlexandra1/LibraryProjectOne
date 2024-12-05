@@ -48,15 +48,19 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
     }
 
     @Override
-    public boolean sale(Book book) {
-        boolean result = decoratedBookRepository.sale(book);
+    public boolean sale(Book book, Integer stock) {
+        boolean result = decoratedBookRepository.sale(book, stock);
+
+        if (book.getStock() - stock < 0){
+            result = false;
+        }
 
         if (result) {
             if (cache.hasResult()) {
                 cache.load().stream()
                         .filter(b -> b.getId().equals(book.getId()))
                         .findFirst()
-                        .ifPresent(b -> b.setStock(book.getStock() - 1));
+                        .ifPresent(b -> b.setStock(book.getStock() - stock));
             }
         } else {
             cache.invalidateCache();

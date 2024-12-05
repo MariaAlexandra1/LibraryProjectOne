@@ -10,7 +10,9 @@ public interface OrdersRepository {
     List<Orders> findAll();
 
     List<Orders> findByUserId(Long user_id);
+    List<Orders> findByUserIdLastMonth(Long user_id);
     boolean save(Orders orders);
-    //boolean delete(Orders orders);
-    //void removeAll();
+    int totalBooksSoldByUserIdLastMonth(Long user_id);
+    double totalPriceByUserIdLastMonth(Long user_id);
+
 }

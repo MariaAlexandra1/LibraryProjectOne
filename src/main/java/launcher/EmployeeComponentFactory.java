@@ -29,15 +29,23 @@ public class EmployeeComponentFactory {
     private final OrdersRepository ordersRepository;
     private final OrdersService ordersService;
     private static EmployeeComponentFactory instance;
+    private static Boolean componentsForTests;
+    private static Stage stage;
 
-    public static EmployeeComponentFactory getInstance(Boolean componentsForTest, Stage stage){
+    public static EmployeeComponentFactory getInstance(Boolean aComponentsForTest, Stage aStage){
         if (instance == null){
-            instance = new EmployeeComponentFactory(componentsForTest, stage);
+            synchronized (AdminComponentFactory.class) {
+                if(instance == null){
+                    componentsForTests = aComponentsForTest;
+                    stage = aStage;
+                    instance = new EmployeeComponentFactory(componentsForTests, stage);
+                }
+            }
         }
         return instance;
     }
 
-    public EmployeeComponentFactory(Boolean componentsForTest, Stage stage) {
+    private EmployeeComponentFactory(Boolean componentsForTest, Stage stage) {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         this.bookService = new BookServiceImpl(bookRepository);
@@ -64,8 +72,14 @@ public class EmployeeComponentFactory {
         return bookService;
     }
 
-    public static EmployeeComponentFactory getInstance() {
-        return instance;
+    public static Stage getStage(){
+        return stage;
     }
+
+    public static Boolean getComponentsForTests(){
+        return componentsForTests;
+    }
+
+
 
 }

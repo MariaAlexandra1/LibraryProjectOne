@@ -8,8 +8,8 @@ public class Orders {
     private Long user_id;
     private String title;
     private String author;
-    private double price;
-    private int stock;
+    private Double price;
+    private Integer stock;
     private LocalDate orderDate;
 
     public Long getId() {
@@ -44,7 +44,7 @@ public class Orders {
         this.author = author;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
@@ -52,7 +52,7 @@ public class Orders {
         this.price = price;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 

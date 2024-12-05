@@ -35,8 +35,8 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public boolean sale(Book book) {
-        return bookRepository.sale(book);
+    public boolean sale(Book book, Integer stock) {
+        return bookRepository.sale(book, stock);
     }
 
     @Override

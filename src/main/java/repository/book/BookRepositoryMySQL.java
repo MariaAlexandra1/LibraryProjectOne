@@ -61,7 +61,7 @@ public class BookRepositoryMySQL implements BookRepository{
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
-            preparedStatement.setDate(3, Date.valueOf(book.getPublishedDate()));
+            preparedStatement.setDate(3, Date.valueOf(LocalDate.now()));
             preparedStatement.setDouble(4, book.getPrice());
             preparedStatement.setInt(5, book.getStock());
             preparedStatement.executeUpdate();
@@ -89,12 +89,16 @@ public class BookRepositoryMySQL implements BookRepository{
     }
 
     @Override
-    public boolean sale(Book book) {
+    public boolean sale(Book book, Integer stock) {
         String newSql = "UPDATE book SET stock=? WHERE author=? AND title=? ;";
+
+        if(book.getStock() < stock){
+            return false;
+        }
 
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
-            preparedStatement.setInt(1, book.getStock() - 1);
+            preparedStatement.setInt(1, book.getStock() - stock);
             preparedStatement.setString(2, book.getAuthor());
             preparedStatement.setString(3, book.getTitle());
             preparedStatement.executeUpdate();
