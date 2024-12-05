@@ -2,12 +2,13 @@ package launcher;
 import controller.LoginController;
 import database.DatabaseConnectionFactory;
 import javafx.stage.Stage;
-import repository.book.BookRepository;
 import repository.book.BookRepositoryMySQL;
 import repository.security.RightsRolesRepository;
 import repository.security.RightsRolesRepositoryMySQL;
 import repository.user.UserRepository;
 import repository.user.UserRepositoryMySQL;
+import service.security.RightsRolesService;
+import service.security.RightsRolesServiceImpl;
 import service.user.AuthenticationService;
 import service.user.AuthenticationServiceImpl;
 import view.LoginView;
@@ -20,28 +21,33 @@ public class LoginComponentFactory {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final RightsRolesRepository rightsRolesRepository;
+    private final RightsRolesService rightsRolesService;
     private final BookRepositoryMySQL bookRepository;
     private static LoginComponentFactory instance;
     private static Boolean componentsForTests;
     private static Stage stage;
 
     public static LoginComponentFactory getInstance(Boolean aComponentsForTests, Stage aStage) {
-        if (instance == null) {
-            componentsForTests = aComponentsForTests;
-            stage = aStage;
-            instance = new LoginComponentFactory(componentsForTests, stage);
+        if (instance == null){
+            synchronized (AdminComponentFactory.class) {
+                if(instance == null){
+                    componentsForTests = aComponentsForTests;
+                    stage = aStage;
+                    instance = new LoginComponentFactory(componentsForTests, stage);
+                }
+            }
         }
-
         return instance;
     }
 
-    public LoginComponentFactory(Boolean componentsForTests, Stage stage){
+    private LoginComponentFactory(Boolean componentsForTests, Stage stage){
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTests).getConnection();
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         this.userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
         this.authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
+        this.rightsRolesService = new RightsRolesServiceImpl(rightsRolesRepository);
         this.loginView = new LoginView(stage);
-        this.loginController = new LoginController(loginView, authenticationService);
+        this.loginController = new LoginController(loginView, authenticationService, rightsRolesService);
         this.bookRepository = new BookRepositoryMySQL(connection);
     }
 

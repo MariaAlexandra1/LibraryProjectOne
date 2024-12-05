@@ -1,7 +1,6 @@
 package model.validator;
 
 import model.User;
-import repository.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

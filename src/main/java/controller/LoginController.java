@@ -2,11 +2,18 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import launcher.AdminComponentFactory;
+import launcher.EmployeeComponentFactory;
+import launcher.LoginComponentFactory;
+import model.Role;
 import model.User;
 
 import model.validator.Notification;
+import service.security.RightsRolesService;
 import service.user.AuthenticationService;
 import view.LoginView;
+
+import java.util.List;
 
 
 public class LoginController {
@@ -14,12 +21,13 @@ public class LoginController {
 
     private final LoginView loginView;
     private final AuthenticationService authenticationService;
+    private final RightsRolesService rightsRolesService;
 
 
-
-    public LoginController(LoginView loginView, AuthenticationService authenticationService) {
+    public LoginController(LoginView loginView, AuthenticationService authenticationService, RightsRolesService rightsRolesService) {
         this.loginView = loginView;
         this.authenticationService = authenticationService;
+        this.rightsRolesService = rightsRolesService;
 
 
         this.loginView.addLoginButtonListener(new LoginButtonListener());
@@ -39,6 +47,17 @@ public class LoginController {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successfull!");
+                User user = loginNotification.getResult();
+                List<Role> roles = rightsRolesService.findRolesForUser(user.getId());
+                System.out.println(roles.size());
+                Role role = roles.get(0);
+                if(role.getRole().equals("administrator")){
+                        AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                }else{
+                        EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                }
+
+
             }
         }
     }

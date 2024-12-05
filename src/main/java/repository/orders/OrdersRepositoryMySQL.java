@@ -56,6 +56,25 @@ public class OrdersRepositoryMySQL implements OrdersRepository{
     }
 
     @Override
+    public List<Orders> findByUserIdLastMonth(Long user_id) {
+        String sql = "SELECT * FROM orders WHERE user_id = ? AND orderDate >= NOW() - INTERVAL 1 MONTH";
+
+        List<Orders> orders = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                orders.add(getOrderFromResultSet(resultSet));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    @Override
     public boolean save(Orders order) {
         String newSql = "INSERT INTO orders VALUES(null, ?, ?, ?, ?, ?, ?);";
 
@@ -73,6 +92,42 @@ public class OrdersRepositoryMySQL implements OrdersRepository{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int totalBooksSoldByUserIdLastMonth(Long user_id) {
+        String sql = "SELECT SUM(stock) AS total FROM orders WHERE user_id = ?;";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public double totalPriceByUserIdLastMonth(Long user_id) {
+        String query = "SELECT SUM(stock * price) AS total FROM orders WHERE user_id = ?;";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
     }
 
 

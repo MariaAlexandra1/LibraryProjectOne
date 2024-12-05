@@ -7,11 +7,15 @@ import java.util.List;
 
 public interface UserRepository {
 
-    List<User> findAll();
+    List<User> findAllEmployee();
 
     Notification<User> findByUsernameAndPassword(String username, String password);
 
+    Notification<User> findByUsername(String username);
+
     boolean save(User user);
+
+    boolean delete(User user);
 
     void removeAll();
 

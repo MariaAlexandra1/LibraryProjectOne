@@ -1,7 +1,14 @@
 package database;
 
+import model.Role;
+import model.User;
+import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 import repository.security.RightsRolesRepositoryMySQL;
+import repository.user.UserRepository;
+import repository.user.UserRepositoryMySQL;
+import service.user.AuthenticationService;
+import service.user.AuthenticationServiceImpl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,6 +26,8 @@ import static database.Constants.getRolesRights;
 
 public class Bootstrap {
     private static RightsRolesRepository rightsRolesRepository;
+    private static UserRepository userRepository;
+    private static AuthenticationService authenticationService;
 
     public static void main(String[] args) throws SQLException {
         dropAll();
@@ -26,6 +35,7 @@ public class Bootstrap {
         bootstrapTables();
 
         bootstrapUserData();
+
     }
 
     private static void dropAll() throws SQLException {
@@ -86,6 +96,8 @@ public class Bootstrap {
 
             JDBConnectionWrapper connectionWrapper = new JDBConnectionWrapper(schema);
             rightsRolesRepository = new RightsRolesRepositoryMySQL(connectionWrapper.getConnection());
+            userRepository = new UserRepositoryMySQL(connectionWrapper.getConnection(), rightsRolesRepository);
+            authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
 
             bootstrapRoles();
             bootstrapRights();
@@ -121,6 +133,36 @@ public class Bootstrap {
     }
 
     private static void bootstrapUserRoles() throws SQLException {
+        Map<String, String> usersForRoles = Map.of(
+                "admin@admin.com", Constants.Roles.ADMINISTRATOR,
+                "alexandra23@gmail.com", Constants.Roles.EMPLOYEE,
+                "eduard@yahoo.com", Constants.Roles.CUSTOMER
+        );
 
+        for (Map.Entry<String, String> person : usersForRoles.entrySet()) {
+            String username = person.getKey();
+            String role = person.getValue();
+
+            Notification<Boolean> authentification = new Notification<>();
+            if(username.equals("admin@admin.com")){
+                authentification = authenticationService.register(username, "password@23");
+            }else if(username.equals("alexandra23@gmail.com")){
+                authentification = authenticationService.register(username, "password@23");
+            }else if(username.equals("eduard@yahoo.com")){
+                authentification = authenticationService.register(username, "password@23");
+            }
+            if(!authentification.hasErrors()){
+                Role userRole = rightsRolesRepository.findRoleByTitle(role);
+                Notification<User> userNotification = userRepository.findByUsername(username);
+                if(!userNotification.hasErrors()){
+                    User user = userNotification.getResult();
+
+                    rightsRolesRepository.removeRolesFromUser(user, user.getRoles());
+
+                    rightsRolesRepository.addRolesToUser(user, List.of(userRole));
+                }
+            }
+
+        }
     }
 }

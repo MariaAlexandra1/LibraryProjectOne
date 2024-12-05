@@ -31,11 +31,14 @@ public class BookController {
         public void handle(ActionEvent actionEvent) {
             String title = bookView.getTitle();
             String author = bookView.getAuthor();
+            Double price = bookView.getPrice();
+            Integer stock = bookView.getStock();
 
             if(title.isEmpty() || author.isEmpty()) {
-                bookView.addDisplayAlertMessage("Save Error", "Problem at Author ot Title fields", "Can not have an empty Title or Author .");
-            }else{
-                BookDTO bookDTO = new BookDTOBuilder().setTitle(title).setAuthor(author).build();
+                bookView.addDisplayAlertMessage("Save Error", "Problem at Title or Author fields", "Can not have empty Author or Title fields. Please fill in the fields before submitting Save!");
+                bookView.getBookObservableList().get(0).setTitle("No Name");
+            } else {
+                BookDTO bookDTO = new BookDTOBuilder().setAuthor(author).setTitle(title).setPrice(price).setStock(stock).build();
                 boolean savedBook = bookService.save(BookMapper.convertBookDTOToBook(bookDTO));
 
                 if (savedBook){
@@ -77,19 +80,19 @@ public class BookController {
             BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
             if (bookDTO != null) {
                 Book book = BookMapper.convertBookDTOToBook(bookDTO);
-                boolean saleSuccessful = bookService.sale(book);
+                bookView.addDisplayAlertMessageWithInput("Sale Successful", "Book Saled", "Book was successfully saled from the database.");
+                boolean saleSuccessful = bookService.sale(book, bookView.getSale());
                 if (saleSuccessful) {
-                    boolean orderSuccessful = ordersService.save(book, 1L);
-                    if (orderSuccessful) {
-                        bookView.addDisplayAlertMessage("Sale Successful", "Book Saled", "Book was successfully saled from the database.");
-                        bookView.updateBookFromObservableList(bookDTO);
-                    } else {
-                        bookView.addDisplayAlertMessage("Sale Error", "Problem at saling book", "There was a problem with the database. Please try again!");
-                    }
+                        boolean orderSuccessful = ordersService.save(book, 1L, bookView.getSale());
+                        if (orderSuccessful)
+                            bookView.updateBookFromObservableList(bookDTO, bookView.getSale());
                 } else {
-                    bookView.addDisplayAlertMessage("Sale Error", "Problem at saling book", "You must select a book before pressing the delete button.");
+                    bookView.addDisplayAlertMessage("Sale Error", "Problem at selling book", "There was a problem with the database. Please try again!");
                 }
+            } else {
+                bookView.addDisplayAlertMessage("Sale Error", "Problem at selling book", "You must select a book before pressing the sale button.");
             }
+
         }
     }
 }

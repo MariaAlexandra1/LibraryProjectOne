@@ -26,10 +26,25 @@ public class OrdersServiceImpl implements OrdersService{
     }
 
     @Override
-    public boolean save(Book book, Long user_id) {
+    public List<Orders> findByUserIdLastMonth(Long user_id) {
+        return ordersRepository.findByUserIdLastMonth(user_id);
+    }
+
+    @Override
+    public boolean save(Book book, Long user_id, Integer stock) {
         Orders order = new OrdersBuilder().setUserId(user_id).setTitle(book.getTitle())
                 .setAuthor(book.getAuthor()).setPrice(book.getPrice())
-                .setStock(book.getStock()).setOrderDate(LocalDate.now()).build();
+                .setStock(stock).setOrderDate(LocalDate.now()).build();
         return ordersRepository.save(order);
+    }
+
+    @Override
+    public int totalBooksSoldByUserIdLastMonth(Long user_id) {
+        return ordersRepository.totalBooksSoldByUserIdLastMonth(user_id);
+    }
+
+    @Override
+    public double totalPriceByUserIdLastMonth(Long user_id) {
+        return ordersRepository.totalPriceByUserIdLastMonth(user_id);
     }
 }
